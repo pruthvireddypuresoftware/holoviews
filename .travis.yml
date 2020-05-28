@@ -53,7 +53,25 @@ stages:
 jobs:
   include:
     ########## Test Stage ##########
-
+    - &default
+      stage: test
+      arch: arm64
+      env: DESC="Python 3.6 tests" HV_REQUIREMENTS="unit_tests" PYTHON_VERSION=3.6
+      before_install:
+        - pip install pyctdev && doit miniconda_install && pip uninstall -y doit pyctdev
+        - export PATH="$HOME/miniconda/bin:$PATH" && hash -r
+        - conda config --set always_yes True
+        - conda install -c pyviz "pyctdev>=0.5" && doit ecosystem_setup
+      install:
+        - doit env_create $CHANS_DEV --python=$PYTHON_VERSION
+        - source activate test-environment
+        - travis_wait 30 doit develop_install $CHANS_DEV -o $HV_REQUIREMENTS
+        - doit env_capture
+      script:
+        - doit test_all_recommended
+      after_success: coveralls
+      after_failure: sleep 10
+      
     - &default
       stage: test
       env: DESC="Python 3.6 tests" HV_REQUIREMENTS="unit_tests" PYTHON_VERSION=3.6
