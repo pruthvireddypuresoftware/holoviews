@@ -58,8 +58,8 @@ jobs:
       arch: arm64
       env: DESC="Python 3.6 tests" HV_REQUIREMENTS="unit_tests" PYTHON_VERSION=3.6
       before_install:
-        - pip install pyctdev && doit miniconda_install && pip uninstall -y doit pyctdev
-        - export PATH="$HOME/miniconda/bin:$PATH" && hash -r
+        - pip install pyctdev && doit miniforge_install && pip uninstall -y doit pyctdev
+        - export PATH="$HOME/miniforge/bin:$PATH" && hash -r
         - conda config --set always_yes True
         - conda install -c pyviz "pyctdev>=0.5" && doit ecosystem_setup
       install:
